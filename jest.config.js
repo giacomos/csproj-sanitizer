@@ -24,5 +24,10 @@ module.exports = {
         "!<rootDir>/node_modules/",
         "!<rootDir>/dist/",
         "!<rootDir>/src/types/*"
+    ],
+    coverageReporters: [
+        "json-summary",
+        "text",
+        "lcov"
     ]
 };

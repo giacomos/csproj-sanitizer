@@ -1,5 +1,3 @@
-// import { cli } from '..';
-import freshy = require('freshy');
 import cli = require('..');
 
 describe('cli', (): void => {

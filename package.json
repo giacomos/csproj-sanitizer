@@ -7,7 +7,8 @@
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "create": "npm run build && npm run test",
     "build": "tsc -p .",
-    "test": "jest --verbose --coverage"
+    "test": "jest --verbose --coverage",
+    "test:badges": "npm run test && jest-coverage-badges 1output \"./badges\""
   },
   "author": "Giacomo Spettoli <giacomo.spettoli@gmail.com>",
   "license": "ISC",
@@ -29,6 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "eslint": "^5.16.0",
     "jest": "^24.8.0",
+    "jest-coverage-badges": "^1.1.2",
     "nodemon": "^1.19.0",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.1.0",
