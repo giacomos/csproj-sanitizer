@@ -4,20 +4,27 @@
   "description": "Sanitizer for csproj files. Finds duplicated includes and missing ones.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "create": "npm run build && npm run test",
+    "build": "tsc -p ."
   },
   "author": "Giacomo Spettoli <giacomo.spettoli@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "figlet": "^1.2.1",
     "glob": "^7.1.3",
     "optimist": "^0.6.1",
     "xml2js": "^0.4.19"
   },
   "bin": {
-    "csproj-sanitizer": "./cli.js"
+    "csproj-sanitizer": "./lib/index.js"
   },
   "devDependencies": {
-    "@types/node": "^12.0.0"
+    "@types/figlet": "^1.2.0",
+    "@types/node": "^12.0.0",
+    "@types/optimist": "0.0.29",
+    "nodemon": "^1.19.0",
+    "ts-node": "^8.1.0",
+    "typescript": "^3.4.5"
   }
 }

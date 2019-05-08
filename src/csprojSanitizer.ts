@@ -10,11 +10,35 @@ const parseStringAsync = util.promisify(parser.parseString);
 
 const cwd = process.cwd();
 
-const DEFAULT_FIND_PATTERN = '**/*.{cshtml,cs}';
-const DEFAULT_FIND_IGNORE = '{node_modules,obj,bin}/**';
+export const DEFAULT_FIND_PATTERN = '**/*.{cshtml,cs}';
+export const DEFAULT_FIND_IGNORE = '{node_modules,obj,bin}/**';
 
-const collectIncludes = (xmlData) => {
-    let includes = [];
+interface Result {
+    includes: string[];
+    duplicates: string[];
+    missing: string[]
+}
+
+interface Attributes {
+    Include: string;
+}
+interface Row {
+    $: Attributes;
+}
+
+interface ItemGroup {
+    Content: Row[];
+    Compile: Row[];
+}
+interface Project {
+    ItemGroup: ItemGroup[];
+}
+interface XmlData {
+    Project: Project;
+}
+
+const collectIncludes = (xmlData: XmlData): string[] => {
+    let includes: string[] = [];
     xmlData.Project.ItemGroup.forEach(itemGroup => {
         if(itemGroup.Content !== undefined) {
             let newIncludes = itemGroup.Content.map(c => c.$.Include);
@@ -28,7 +52,7 @@ const collectIncludes = (xmlData) => {
     return includes;
 };
  
-const findDuplicates = (entries) => {
+const findDuplicates = (entries: string[]): string[] => {
     let sortedIncludes = entries.sort();
     var duplicates = [];
     for (var i = 0; i < sortedIncludes.length - 1; i++) {
@@ -39,10 +63,10 @@ const findDuplicates = (entries) => {
     return duplicates;
 };
 
-const findMissingIncludes = async (entries, findPattern, findIgnores) => {
+const findMissingIncludes = async (entries: string[], findPattern: string, findIgnores: string): Promise<string[]> => {
     const globAsync = util.promisify(glob);
-    const files = await globAsync(findPattern, {"ignore": findIgnores});
-    let missingFiles = [];
+    const files: string[] = await globAsync(findPattern, {"ignore": findIgnores});
+    let missingFiles: string[] = [];
     files.forEach(filePath => {
         const relativePath = filePath.replace(path.join(cwd, "/"),"").split(path.sep).join('\\');
         if (entries.indexOf(relativePath) === -1) {
@@ -52,7 +76,7 @@ const findMissingIncludes = async (entries, findPattern, findIgnores) => {
     return missingFiles;
 };
 
-const findStringLines = (data, searchKeyword) => {
+const findStringLines = (data: string, searchKeyword: string) => {
     let dataArray = data.split('\n');
     let lines = [];
 
@@ -64,7 +88,7 @@ const findStringLines = (data, searchKeyword) => {
     return lines;
 };
 
-report = (res) => {
+const report = (res: Result, data: string): void => {
     if (res.duplicates.length > 0) {
         console.error(`${res.duplicates.length} duplicated includes found.`);
         res.duplicates.forEach(element => {
@@ -88,11 +112,11 @@ report = (res) => {
     console.log('All done');
 }
 
-async function csprojSanitizer({filePath, findPattern, findIgnores}) {
+export const csprojSanitizer = async ({filePath, findPattern, findIgnores}: {filePath: string, findPattern: string, findIgnores: string}) => {
     
     let data;
     let parsedData;
-    let results = {};
+    let results: Result = {includes: [], duplicates: [], missing: []};
 
     findPattern = findPattern || DEFAULT_FIND_PATTERN;
     findIgnores = findIgnores || DEFAULT_FIND_IGNORE;
@@ -112,11 +136,5 @@ async function csprojSanitizer({filePath, findPattern, findIgnores}) {
     results.duplicates = findDuplicates(results.includes);
     results.missing = await findMissingIncludes(results.includes, findPattern, findIgnores);
 
-    report(results);
-}
-
-module.exports = {
-    csprojSanitizer,
-    DEFAULT_FIND_IGNORE,
-    DEFAULT_FIND_PATTERN
+    report(results, data);
 }
