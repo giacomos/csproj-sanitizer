@@ -1,4 +1,5 @@
 interface Result {
+    data: string;
     includes: string[];
     duplicates: string[];
     missing: string[];
@@ -23,4 +24,5 @@ interface Params {
     filePath: string;
     findPattern?: string;
     findIgnores?: string;
+    rootDir: string;
 }

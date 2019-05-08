@@ -39,9 +39,9 @@ const findDuplicates = (entries: string[]): string[] => {
     return duplicates;
 };
 
-const findMissingIncludes = async (entries: string[], findPattern: string, findIgnores: string): Promise<string[]> => {
+const findMissingIncludes = async (entries: string[], findPattern: string, findIgnores: string, rootDir: string): Promise<string[]> => {
     const globAsync = util.promisify(glob);
-    const files: string[] = await globAsync(findPattern, {"ignore": findIgnores});
+    const files: string[] = await globAsync(path.join(rootDir, findPattern), {"ignore": findIgnores});
     let missingFiles: string[] = [];
     files.forEach((filePath): void => {
         const relativePath = filePath.replace(path.join(cwd, "/"),"").split(path.sep).join('\\');
@@ -52,7 +52,7 @@ const findMissingIncludes = async (entries: string[], findPattern: string, findI
     return missingFiles;
 };
 
-const findStringLines = (data: string, searchKeyword: string): number[] => {
+export const findStringLines = (data: string, searchKeyword: string): number[] => {
     let dataArray = data.split('\n');
     let lines = [];
 
@@ -88,11 +88,10 @@ const report = (res: Result, data: string): number => {
     return 0;
 }
 
-const csprojSanitizer = async ({filePath, findPattern, findIgnores}: Params): Promise<number> => {
+const csprojSanitizer = async ({filePath, findPattern, findIgnores, rootDir}: Params): Promise<Result> => {
 
-    let data;
     let parsedData;
-    let results: Result = {includes: [], duplicates: [], missing: []};
+    let results: Result = {data: "", includes: [], duplicates: [], missing: []};
 
     findPattern = findPattern || DEFAULT_FIND_PATTERN;
     findIgnores = findIgnores || DEFAULT_FIND_IGNORE;
@@ -100,12 +99,12 @@ const csprojSanitizer = async ({filePath, findPattern, findIgnores}: Params): Pr
     filePath = path.isAbsolute(filePath) ? filePath : path.join(cwd, filePath);
 
     try {
-        data = await readFileAsync(filePath, {encoding: 'utf-8'});
+        results.data = await readFileAsync(filePath, {encoding: 'utf-8'});
     } catch(e) {
         throw new Error('Error while reading file: ' + e.message);
     }
     try {
-        parsedData = await parseStringAsync(data);
+        parsedData = await parseStringAsync(results.data);
     } catch(e) {
         throw new Error('Error parsing file: ' + e.message);
     }
@@ -116,8 +115,8 @@ const csprojSanitizer = async ({filePath, findPattern, findIgnores}: Params): Pr
         throw new Error('Error while collecting includes: ' + e.message);
     }
     results.duplicates = findDuplicates(results.includes);
-    results.missing = await findMissingIncludes(results.includes, findPattern, findIgnores);
+    results.missing = await findMissingIncludes(results.includes, findPattern, findIgnores, rootDir);
 
-    return report(results, data);
+    return results;
 }
 export default csprojSanitizer;
