@@ -1,10 +1,11 @@
 import { DEFAULT_FIND_PATTERN, DEFAULT_FIND_IGNORE } from "./config";
 
-const fs = require('fs');
-const util = require('util');
-const path  = require('path');
-const xml2js = require('xml2js');
-const glob = require('glob');
+import fs from 'fs';
+import util from 'util';
+import path from 'path';
+import glob from 'glob';
+// @ts-ignore
+import xml2js = require('xml2js');
 
 const readFileAsync = util.promisify(fs.readFile);
 const parser = new xml2js.Parser();
@@ -12,17 +13,15 @@ const parseStringAsync = util.promisify(parser.parseString);
 
 const cwd = process.cwd();
 
-
-
 const collectIncludes = (xmlData: XmlData): string[] => {
     let includes: string[] = [];
-    xmlData.Project.ItemGroup.forEach(itemGroup => {
+    xmlData.Project.ItemGroup.forEach((itemGroup): void => {
         if(itemGroup.Content !== undefined) {
-            let newIncludes = itemGroup.Content.map(c => c.$.Include);
+            let newIncludes = itemGroup.Content.map((c): string => c.$.Include);
             includes = includes.concat(newIncludes);
         }
         if(itemGroup.Compile !== undefined) {
-            let newIncludes = itemGroup.Compile.map(c => c.$.Include);
+            let newIncludes = itemGroup.Compile.map((c): string => c.$.Include);
             includes = includes.concat(newIncludes);
         }
     });
@@ -44,7 +43,7 @@ const findMissingIncludes = async (entries: string[], findPattern: string, findI
     const globAsync = util.promisify(glob);
     const files: string[] = await globAsync(findPattern, {"ignore": findIgnores});
     let missingFiles: string[] = [];
-    files.forEach(filePath => {
+    files.forEach((filePath): void => {
         const relativePath = filePath.replace(path.join(cwd, "/"),"").split(path.sep).join('\\');
         if (entries.indexOf(relativePath) === -1) {
             missingFiles.push(relativePath);
@@ -53,7 +52,7 @@ const findMissingIncludes = async (entries: string[], findPattern: string, findI
     return missingFiles;
 };
 
-const findStringLines = (data: string, searchKeyword: string) => {
+const findStringLines = (data: string, searchKeyword: string): number[] => {
     let dataArray = data.split('\n');
     let lines = [];
 
@@ -68,7 +67,7 @@ const findStringLines = (data: string, searchKeyword: string) => {
 const report = (res: Result, data: string): void => {
     if (res.duplicates.length > 0) {
         console.error(`${res.duplicates.length} duplicated includes found.`);
-        res.duplicates.forEach(element => {
+        res.duplicates.forEach((element): void => {
             var lines = findStringLines(data, element);
             console.error(`Duplicated include: "${element}", lines: ${lines.join(', ')}`);
         });
@@ -77,7 +76,7 @@ const report = (res: Result, data: string): void => {
     }
     if (res.missing.length > 0) {
         console.error(`${res.missing.length} missing includes found.`);
-        res.missing.forEach(element => {
+        res.missing.forEach((element): void => {
             console.log(`Missing file in csproj: "${element}"`);
         });
     } else {
@@ -89,7 +88,7 @@ const report = (res: Result, data: string): void => {
     console.log('All done');
 }
 
-const csprojSanitizer = async ({filePath, findPattern, findIgnores}: Params) => {
+const csprojSanitizer = async ({filePath, findPattern, findIgnores}: Params): Promise<void> => {
 
     let data;
     let parsedData;
@@ -98,8 +97,10 @@ const csprojSanitizer = async ({filePath, findPattern, findIgnores}: Params) => 
     findPattern = findPattern || DEFAULT_FIND_PATTERN;
     findIgnores = findIgnores || DEFAULT_FIND_IGNORE;
 
+    filePath = path.isAbsolute(filePath) ? filePath : path.join(cwd, filePath);
+
     try {
-        data = await readFileAsync(path.join(cwd, filePath), {encoding: 'utf-8'});
+        data = await readFileAsync(filePath, {encoding: 'utf-8'});
     } catch(e) {
         throw new Error('Error while reading file: ' + e.message);
     }

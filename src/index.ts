@@ -10,7 +10,7 @@ const usage = `${figlet.textSync('csproj-sanitizer', { horizontalLayout: 'full' 
 
 var argv = optimist.usage(usage)
     .demand(['filePath'])
-    .describe('filePath', 'Relative path where the csproj file is located')
+    .describe('filePath', 'Relative or Absolute path where the csproj file is located')
     .default('findPattern', DEFAULT_FIND_PATTERN)
     .default('findIgnores', DEFAULT_FIND_IGNORE)
     .string('filePath')
