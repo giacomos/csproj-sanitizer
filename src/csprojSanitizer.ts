@@ -88,7 +88,7 @@ const report = (res: Result, data: string): void => {
     console.log('All done');
 }
 
-export const csprojSanitizer = async ({filePath, findPattern, findIgnores}: Params) => {
+const csprojSanitizer = async ({filePath, findPattern, findIgnores}: Params) => {
 
     let data;
     let parsedData;
@@ -114,3 +114,4 @@ export const csprojSanitizer = async ({filePath, findPattern, findIgnores}: Para
 
     report(results, data);
 }
+export default csprojSanitizer;

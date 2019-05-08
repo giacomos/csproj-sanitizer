@@ -24,6 +24,6 @@ interface XmlData {
 
 interface Params {
     filePath: string;
-    findPattern: string;
-    findIgnores: string;
+    findPattern?: string;
+    findIgnores?: string;
 }
