@@ -1,5 +1,7 @@
 # csproj-sanitizer
 
+[![CodeClimate](https://raw.githubusercontent.com/giacomos/csproj-sanitizer/master/badges/badge-statements.svg)](https://github.com/giacomos/csproj-sanitizer)
+
 This mini package helps sanitize your csproj file from duplicates and missing includes.
 
 ## Usage
