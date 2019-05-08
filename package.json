@@ -11,7 +11,7 @@
     "test:badges": "npm run test && jest-coverage-badges 1output \"./badges\""
   },
   "author": "Giacomo Spettoli <giacomo.spettoli@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "figlet": "^1.2.1",
     "glob": "^7.1.3",

@@ -1,6 +1,6 @@
 # csproj-sanitizer
 
-![Alt text](./badges/badge-statements.svg)
+![Alt text](./badges/badge-statements.svg) ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
 
 This mini package helps sanitize your csproj file from duplicates and missing includes.
 
