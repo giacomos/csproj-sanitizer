@@ -11,8 +11,6 @@ const readFileAsync = util.promisify(fs.readFile);
 const parser = new xml2js.Parser();
 const parseStringAsync = util.promisify(parser.parseString);
 
-const cwd = process.cwd();
-
 const collectIncludes = (xmlData: XmlData): string[] => {
     let includes: string[] = [];
     xmlData.Project.ItemGroup.forEach((itemGroup): void => {
@@ -44,7 +42,7 @@ const findMissingIncludes = async (entries: string[], findPattern: string, findI
     const files: string[] = await globAsync(path.join(rootDir, findPattern), {"ignore": findIgnores});
     let missingFiles: string[] = [];
     files.forEach((filePath): void => {
-        const relativePath = filePath.replace(path.join(cwd, "/"),"").split(path.sep).join('\\');
+        const relativePath = filePath.replace(path.join(rootDir, "/"),"").split(path.sep).join('\\');
         if (entries.indexOf(relativePath) === -1) {
             missingFiles.push(relativePath);
         }
@@ -64,30 +62,6 @@ export const findStringLines = (data: string, searchKeyword: string): number[] =
     return lines;
 };
 
-const report = (res: Result, data: string): number => {
-    if (res.duplicates.length > 0) {
-        console.error(`${res.duplicates.length} duplicated includes found.`);
-        res.duplicates.forEach((element): void => {
-            var lines = findStringLines(data, element);
-            console.error(`Duplicated include: "${element}", lines: ${lines.join(', ')}`);
-        });
-    } else {
-        console.log(`No duplicated includes found.`);
-    }
-    if (res.missing.length > 0) {
-        console.error(`${res.missing.length} missing includes found.`);
-        res.missing.forEach((element): void => {
-            console.log(`Missing file in csproj: "${element}"`);
-        });
-    } else {
-        console.log(`No missing includes found.`);
-    }
-    if (res.duplicates.length > 0 || res.missing.length > 0) {
-        return 1
-    }
-    return 0;
-}
-
 const csprojSanitizer = async ({filePath, findPattern, findIgnores, rootDir}: Params): Promise<Result> => {
 
     let parsedData;
@@ -96,7 +70,7 @@ const csprojSanitizer = async ({filePath, findPattern, findIgnores, rootDir}: Pa
     findPattern = findPattern || DEFAULT_FIND_PATTERN;
     findIgnores = findIgnores || DEFAULT_FIND_IGNORE;
 
-    filePath = path.isAbsolute(filePath) ? filePath : path.join(cwd, filePath);
+    filePath = path.isAbsolute(filePath) ? filePath : path.join(rootDir, filePath);
 
     try {
         results.data = await readFileAsync(filePath, {encoding: 'utf-8'});

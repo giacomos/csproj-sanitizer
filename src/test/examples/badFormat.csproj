@@ -3,5 +3,5 @@
   <ItemGroup>
     <Compile Include="src\test\examples\test.cs" />
     <Content Include="src\test\examples\test.cshtml" />
-  </ItemGroup>
+
 </Project>
