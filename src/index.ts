@@ -17,8 +17,8 @@ var argv = optimist.usage(usage)
     .string('findIgnores')
     .argv;
 
-    csprojSanitizer({
-        filePath:argv.filePath,
-        findPattern: argv.findPattern,
-        findIgnores: argv.findIgnores
-    });
+csprojSanitizer({
+    filePath:argv.filePath,
+    findPattern: argv.findPattern,
+    findIgnores: argv.findIgnores
+});

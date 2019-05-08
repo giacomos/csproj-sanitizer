@@ -51,7 +51,7 @@ const collectIncludes = (xmlData: XmlData): string[] => {
     });
     return includes;
 };
- 
+
 const findDuplicates = (entries: string[]): string[] => {
     let sortedIncludes = entries.sort();
     var duplicates = [];
@@ -113,7 +113,7 @@ const report = (res: Result, data: string): void => {
 }
 
 export const csprojSanitizer = async ({filePath, findPattern, findIgnores}: {filePath: string, findPattern: string, findIgnores: string}) => {
-    
+
     let data;
     let parsedData;
     let results: Result = {includes: [], duplicates: [], missing: []};
@@ -125,7 +125,7 @@ export const csprojSanitizer = async ({filePath, findPattern, findIgnores}: {fil
         data = await readFileAsync(path.join(cwd, filePath), {encoding: 'utf-8'});
     } catch(e) {
         throw new Error('Error while reading file: ' + e.message);
-    }        
+    }
     try {
         parsedData = await parseStringAsync(data);
     } catch(e) {
