@@ -13,30 +13,6 @@ const cwd = process.cwd();
 export const DEFAULT_FIND_PATTERN = '**/*.{cshtml,cs}';
 export const DEFAULT_FIND_IGNORE = '{node_modules,obj,bin}/**';
 
-interface Result {
-    includes: string[];
-    duplicates: string[];
-    missing: string[]
-}
-
-interface Attributes {
-    Include: string;
-}
-interface Row {
-    $: Attributes;
-}
-
-interface ItemGroup {
-    Content: Row[];
-    Compile: Row[];
-}
-interface Project {
-    ItemGroup: ItemGroup[];
-}
-interface XmlData {
-    Project: Project;
-}
-
 const collectIncludes = (xmlData: XmlData): string[] => {
     let includes: string[] = [];
     xmlData.Project.ItemGroup.forEach(itemGroup => {
@@ -112,7 +88,7 @@ const report = (res: Result, data: string): void => {
     console.log('All done');
 }
 
-export const csprojSanitizer = async ({filePath, findPattern, findIgnores}: {filePath: string, findPattern: string, findIgnores: string}) => {
+export const csprojSanitizer = async ({filePath, findPattern, findIgnores}: Params) => {
 
     let data;
     let parsedData;
