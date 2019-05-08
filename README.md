@@ -1,7 +1,7 @@
 # csproj-sanitizer
 
-![Alt text](https://raw.githubusercontent.com/giacomos/csproj-sanitizer/master/badges/badge-statements.svg)
-<img src="https://raw.githubusercontent.com/giacomos/csproj-sanitizer/master/badges/badge-statements.svg">
+![Alt text](./badges/badge-statements.svg)
+<img src="./badges/badge-statements.svg">
 
 This mini package helps sanitize your csproj file from duplicates and missing includes.
 
