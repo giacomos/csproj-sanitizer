@@ -15,6 +15,9 @@ module.exports = {
     testMatch: [
         '**/test/**/*.test.(ts|js)'
     ],
+    testPathIgnorePatterns: [
+        '/(node_modules|lib)/'
+    ],
     testEnvironment: 'node',
     collectCoverageFrom: [
         "src/**/*.{js,ts}",

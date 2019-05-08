@@ -22,4 +22,4 @@ csprojSanitizer({
     filePath:argv.filePath,
     findPattern: argv.findPattern,
     findIgnores: argv.findIgnores
-});
+}).then((res): void=> process.exit(res));

@@ -64,7 +64,7 @@ const findStringLines = (data: string, searchKeyword: string): number[] => {
     return lines;
 };
 
-const report = (res: Result, data: string): void => {
+const report = (res: Result, data: string): number => {
     if (res.duplicates.length > 0) {
         console.error(`${res.duplicates.length} duplicated includes found.`);
         res.duplicates.forEach((element): void => {
@@ -83,12 +83,12 @@ const report = (res: Result, data: string): void => {
         console.log(`No missing includes found.`);
     }
     if (res.duplicates.length > 0 || res.missing.length > 0) {
-        process.exit(1);
+        return 1
     }
-    console.log('All done');
+    return 0;
 }
 
-const csprojSanitizer = async ({filePath, findPattern, findIgnores}: Params): Promise<void> => {
+const csprojSanitizer = async ({filePath, findPattern, findIgnores}: Params): Promise<number> => {
 
     let data;
     let parsedData;
@@ -110,10 +110,14 @@ const csprojSanitizer = async ({filePath, findPattern, findIgnores}: Params): Pr
         throw new Error('Error parsing file: ' + e.message);
     }
 
-    results.includes = collectIncludes(parsedData);
+    try {
+        results.includes = collectIncludes(parsedData);
+    } catch(e) {
+        throw new Error('Error while collecting includes: ' + e.message);
+    }
     results.duplicates = findDuplicates(results.includes);
     results.missing = await findMissingIncludes(results.includes, findPattern, findIgnores);
 
-    report(results, data);
+    return report(results, data);
 }
 export default csprojSanitizer;

@@ -1,2 +1,2 @@
-declare const csprojSanitizer: ({ filePath, findPattern, findIgnores }: Params) => Promise<void>;
+declare const csprojSanitizer: ({ filePath, findPattern, findIgnores }: Params) => Promise<number>;
 export default csprojSanitizer;
