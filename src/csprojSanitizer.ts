@@ -1,3 +1,5 @@
+import { DEFAULT_FIND_PATTERN, DEFAULT_FIND_IGNORE } from "./config";
+
 const fs = require('fs');
 const util = require('util');
 const path  = require('path');
@@ -10,8 +12,7 @@ const parseStringAsync = util.promisify(parser.parseString);
 
 const cwd = process.cwd();
 
-export const DEFAULT_FIND_PATTERN = '**/*.{cshtml,cs}';
-export const DEFAULT_FIND_IGNORE = '{node_modules,obj,bin}/**';
+
 
 const collectIncludes = (xmlData: XmlData): string[] => {
     let includes: string[] = [];
