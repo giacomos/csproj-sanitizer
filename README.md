@@ -1,7 +1,6 @@
 # csproj-sanitizer
 
 ![Alt text](./badges/badge-statements.svg)
-<img src="./badges/badge-statements.svg">
 
 This mini package helps sanitize your csproj file from duplicates and missing includes.
 
