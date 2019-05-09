@@ -4,6 +4,12 @@
 
 This mini package helps sanitize your csproj file from duplicates and missing includes.
 
+## Installation
+
+```bash
+$ npm i -g csproj-sanitizer
+```
+
 ## Usage
 
 ```bash
