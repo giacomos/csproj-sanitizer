@@ -44,4 +44,3 @@ X 1 missing includes found.
 
 # Author
 Giacomo Spettoli
-
