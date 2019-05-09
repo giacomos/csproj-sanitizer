@@ -1,46 +1,30 @@
-#!/usr/bin/env node
-
-import optimist from 'optimist';
-import figlet = require('figlet');
-import { DEFAULT_FIND_IGNORE, DEFAULT_FIND_PATTERN } from './config';
+import chalk from 'chalk';
 import csprojSanitizer, { findStringLines } from './csprojSanitizer';
-
-const usage = `${figlet.textSync('csproj-sanitizer', { horizontalLayout: 'full' })}
-    \n\nUsage: csproj-sanitizer --filePath [path]`;
 
 const cwd = process.cwd();
 
 const report = (res: Result): void => {
     if (res.duplicates.length > 0) {
-        console.error(`${res.duplicates.length} duplicated includes found.`);
+        process.stderr.write(`${res.duplicates.length} duplicated includes found.\n`);
         res.duplicates.forEach((element): void => {
             var lines = findStringLines(res.data, element);
-            console.error(`Duplicated include: "${element}", lines: ${lines.join(', ')}`);
+            process.stderr.write(`${chalk.yellow('X')} Duplicated include: "${element}", lines: ${lines.join(', ')}\n`);
         });
     } else {
-        console.log(`No duplicated includes found.`);
+        process.stdout.write(`${chalk.green('✓')} No duplicated includes found.\n`);
     }
     if (res.missing.length > 0) {
-        console.error(`${res.missing.length} missing includes found.`);
+        process.stderr.write(`${chalk.red('X')} ${res.missing.length} missing includes found.\n`);
         res.missing.forEach((element): void => {
-            console.error(`Missing file in csproj: "${element}"`);
+            process.stderr.write(`- Missing file in csproj: "${element}"\n`);
         });
     } else {
-        console.log(`No missing includes found.`);
-    }
-}
-export const cli = (): Promise<void> => {
-    optimist.usage(usage)
-        .demand(['filePath'])
-        .describe('filePath', 'Relative or Absolute path where the csproj file is located')
-        .default('findPattern', DEFAULT_FIND_PATTERN)
-        .default('findIgnores', DEFAULT_FIND_IGNORE)
-        .default('rootDir', cwd)
-        .string('filePath')
-        .string('findPattern')
-        .string('findIgnores');
 
-    var argv = optimist.parse(process.argv);
+        process.stdout.write(`${chalk.green('✓')} No missing includes found.\n`);
+    }
+};
+
+const app = (argv: Params): Promise<void> => {
 
     return csprojSanitizer({
         filePath:argv.filePath,
@@ -50,12 +34,13 @@ export const cli = (): Promise<void> => {
     }).then((result): Result => {
         report(result);
         return result;
-    }).then((res): void=> {
+    }).then((res): void => {
         const exitCode = (res.duplicates.length > 0 || res.missing.length > 0) ? 1 : 0;
-        process.exit(exitCode);
+        process.exitCode = exitCode;
+    }).catch((err): void => {
+        process.stderr.write(err.message);
+        process.exitCode = 1;
     });
-}
+};
 
-if (require.main === module) {
-    cli();
-}
+export default app;

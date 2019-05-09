@@ -13,6 +13,10 @@ const parseStringAsync = util.promisify(parser.parseString);
 
 const collectIncludes = (xmlData: XmlData): string[] => {
     let includes: string[] = [];
+    // @ts-ignore
+    if (xmlData.Project === undefined || !Array.isArray(xmlData.Project.ItemGroup)) {
+        throw new Error('The file structure does not contain a Project and/or ItemGroup nodes');
+    }
     xmlData.Project.ItemGroup.forEach((itemGroup): void => {
         if(itemGroup.Content !== undefined) {
             let newIncludes = itemGroup.Content.map((c): string => c.$.Include);
@@ -72,22 +76,11 @@ const csprojSanitizer = async ({filePath, findPattern, findIgnores, rootDir}: Pa
 
     filePath = path.isAbsolute(filePath) ? filePath : path.join(rootDir, filePath);
 
-    try {
-        results.data = await readFileAsync(filePath, {encoding: 'utf-8'});
-    } catch(e) {
-        throw new Error('Error while reading file: ' + e.message);
-    }
-    try {
-        parsedData = await parseStringAsync(results.data);
-    } catch(e) {
-        throw new Error('Error parsing file: ' + e.message);
-    }
+    results.data = await readFileAsync(filePath, {encoding: 'utf-8'});
+    parsedData = await parseStringAsync(results.data);
 
-    try {
-        results.includes = collectIncludes(parsedData);
-    } catch(e) {
-        throw new Error('Error while collecting includes: ' + e.message);
-    }
+    results.includes = collectIncludes(parsedData);
+
     results.duplicates = findDuplicates(results.includes);
     results.missing = await findMissingIncludes(results.includes, findPattern, findIgnores, rootDir);
 

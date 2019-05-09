@@ -1,61 +1,71 @@
-import cli = require('..');
+import app from '..';
+import chalk from 'chalk';
+import path from 'path';
+
+const stdoutWrite = jest.spyOn(process.stdout, 'write');
+const stderrWrite = jest.spyOn(process.stderr, 'write');
+const rootDir = path.join(process.cwd(), 'src/test');
 
 describe('cli', (): void => {
+    afterEach(async (): Promise<void> => {
+        stdoutWrite.mock.calls = [];
+        stderrWrite.mock.calls = [];
+    });
 
     it('correctly work with proper csproj', async (): Promise<void> => {
-        const log = jest.spyOn(console, 'log');
-        jest.spyOn(process, 'exit').mockImplementationOnce((): never => {
-            throw new Error('process.exit() was called.')
-        });
         process.argv.push('--filePath', 'src/test/examples/correct.csproj');
-        log.mock.calls = [];
-        await expect(cli.cli()).rejects.toThrow(new Error('process.exit() was called.'))
-        expect(log.mock.calls).toEqual([
-            ["No duplicated includes found."],
-            ["No missing includes found."]
+        await app({
+            'filePath': 'src/test/examples/correct.csproj',
+            rootDir
+        });
+        expect(stdoutWrite.mock.calls).toEqual([
+            [`${chalk.green('✓')} No duplicated includes found.\n`],
+            [`${chalk.green('✓')} No missing includes found.\n`]
         ]);
-        expect(process.exit).toHaveBeenCalledWith(0);
+        expect(process.exitCode).toEqual(0);
     });
 
     it('correctly work with csproj with duplicates', async (): Promise<void> => {
-        const log = jest.spyOn(console, 'log');
-        const error = jest.spyOn(console, 'error');
-        jest.spyOn(process, 'exit').mockImplementationOnce((): never => {
-            throw new Error('process.exit() was called.')
+        await app({
+            'filePath': 'src/test/examples/duplicate.csproj',
+            rootDir
         });
-        process.argv[3] = 'src/test/examples/duplicate.csproj';
-        log.mock.calls = [];
-        error.mock.calls = [];
-        await expect(cli.cli()).rejects.toThrow(new Error('process.exit() was called.'))
-        expect(log.mock.calls).toEqual([
-            ["No missing includes found."]
+        expect(stdoutWrite.mock.calls).toEqual([
+            [`${chalk.green('✓')} No missing includes found.\n`]
         ]);
-        expect(error.mock.calls).toEqual([
-            ["1 duplicated includes found."],
-            ["Duplicated include: \"src\\test\\examples\\test.cshtml\", lines: 5, 6"]
+        expect(stderrWrite.mock.calls).toEqual([
+            ["1 duplicated includes found.\n"],
+            [`${chalk.yellow('X')} Duplicated include: "src\\test\\examples\\test.cshtml", lines: 5, 6\n`]
         ]);
 
-        expect(process.exit).toHaveBeenCalledWith(1);
+        expect(process.exitCode).toEqual(1);
     });
 
     it('correctly work with csproj with missing includes', async (): Promise<void> => {
-        const log = jest.spyOn(console, 'log');
-        const error = jest.spyOn(console, 'error');
-        jest.spyOn(process, 'exit').mockImplementationOnce((): never => {
-            throw new Error('process.exit() was called.')
+        await app({
+            'filePath': 'src/test/examples/missing.csproj',
+            rootDir
         });
-        process.argv[3] = 'src/test/examples/missing.csproj';
-        log.mock.calls = [];
-        error.mock.calls = [];
-        await expect(cli.cli()).rejects.toThrow(new Error('process.exit() was called.'))
-        expect(log.mock.calls).toEqual([
-            ["No duplicated includes found."],
+        expect(stdoutWrite.mock.calls).toEqual([
+            [`${chalk.green('✓')} No duplicated includes found.\n`],
         ]);
-        expect(error.mock.calls).toEqual([
-            ["1 missing includes found."],
-            ["Missing file in csproj: \"src\\test\\examples\\test.cshtml\""]
+        expect(stderrWrite.mock.calls).toEqual([
+            [`${chalk.red('X')} 1 missing includes found.\n`],
+            ["- Missing file in csproj: \"src\\test\\examples\\test.cshtml\"\n"]
         ]);
 
-        expect(process.exit).toHaveBeenCalledWith(1);
+        expect(process.exitCode).toEqual(1);
+    });
+
+    it('correctly fail if csproj is not found', async (): Promise<void> => {
+        await app({
+            'filePath': 'src/test/examples/notFound.csproj',
+            rootDir
+        });
+        expect(stderrWrite.mock.calls).toEqual([
+            [`ENOENT: no such file or directory, open '${rootDir}/examples/notFound.csproj'`],
+        ]);
+
+        expect(process.exitCode).toEqual(1);
     });
 });

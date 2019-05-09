@@ -1,2 +1,2 @@
-#!/usr/bin/env node
-export declare const cli: () => Promise<void>;
+declare const app: (argv: Params) => Promise<void>;
+export default app;

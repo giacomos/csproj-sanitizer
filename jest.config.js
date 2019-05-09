@@ -21,6 +21,7 @@ module.exports = {
     testEnvironment: 'node',
     collectCoverageFrom: [
         "src/**/*.{js,ts}",
+        "!<rootDir>/src/cli.ts",
         "!<rootDir>/node_modules/",
         "!<rootDir>/dist/",
         "!<rootDir>/src/types/*"

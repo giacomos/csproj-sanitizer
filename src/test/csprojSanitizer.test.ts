@@ -36,20 +36,20 @@ describe('csprojSanitizer', (): void => {
         await expect(csprojSanitizer({
             filePath: './examples/missingProject.csproj',
             rootDir
-        })).rejects.toThrow(new Error(`Error while collecting includes: Cannot read property 'ItemGroup' of undefined`));
+        })).rejects.toThrow(new Error(`The file structure does not contain a Project and/or ItemGroup nodes`));
     });
 
     it('to break when csproj is not found', async (): Promise<void> => {
         await expect(csprojSanitizer({
             filePath: './examples/notFound.csproj',
             rootDir
-        })).rejects.toThrow(new Error(`Error while reading file: ENOENT: no such file or directory, open '${rootDir}/examples/notFound.csproj'`));
+        })).rejects.toThrow(new Error(`ENOENT: no such file or directory, open '${rootDir}/examples/notFound.csproj'`));
     });
 
     it('to break when csproj has xml errors', async (): Promise<void> => {
         await expect(csprojSanitizer({
             filePath: './examples/badFormat.csproj',
             rootDir
-        })).rejects.toThrow(new Error(`Error parsing file: Unexpected close tag\nLine: 6\nColumn: 10\nChar: >`));
+        })).rejects.toThrow(new Error(`Unexpected close tag\nLine: 6\nColumn: 10\nChar: >`));
     });
 });
