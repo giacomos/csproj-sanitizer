@@ -29,6 +29,15 @@ Options:
   --findIgnores                                                  [default: "{node_modules,obj,bin}/**"]
 ```
 
+# Example
+
+```
+$ csproj-sanitizer --filePath src/test/examples/missing.csproj
+✓ No duplicated includes found.
+X 1 missing includes found.
+- Missing file in csproj: "src\test\examples\test.cshtml"
+```
+
 # Author
 Giacomo Spettoli
 
