@@ -1,12 +1,12 @@
 {
   "name": "csproj-sanitizer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Giacomo Spettoli <giacomo.spettoli@gmail.com>",
   "description": "Sanitizer for csproj files. Finds duplicated includes and missing ones.",
   "bin": {
-    "csproj-sanitizer": "./lib/cli.js"
+    "csproj-sanitizer": "./build/cli.js"
   },
-  "main": "index.js",
+  "main": "./build/index.js",
   "repository": "https://github.com/giacomos/csproj-sanitizer",
   "homepage": "https://www.npmjs.com/package/csproj-sanitizer",
   "scripts": {
