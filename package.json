@@ -8,6 +8,7 @@
   },
   "main": "index.js",
   "repository": "https://github.com/giacomos/csproj-sanitizer",
+  "homepage": "https://www.npmjs.com/package/csproj-sanitizer",
   "scripts": {
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "create": "npm run build && npm run test",
