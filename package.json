@@ -1,6 +1,6 @@
 {
   "name": "csproj-sanitizer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Giacomo Spettoli <giacomo.spettoli@gmail.com>",
   "description": "Sanitizer for csproj files. Finds duplicated includes and missing ones.",
   "bin": {
