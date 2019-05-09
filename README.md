@@ -1,6 +1,6 @@
 # csproj-sanitizer
 
-![Code coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg) ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
+![Build status](https://travis-ci.com/giacomos/csproj-sanitizer/pull_requests#) ![Code coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg) ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
 
 This mini package helps sanitize your csproj file from duplicates and missing includes.
 
