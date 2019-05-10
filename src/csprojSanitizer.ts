@@ -21,14 +21,6 @@ const collectIncludes = (xmlData: XmlData): string[] => {
         let contents = itemGroup.Content !== undefined ? itemGroup.Content.map((c): string => c.$.Include) : [];
         let compiles = itemGroup.Compile !== undefined ? itemGroup.Compile.map((c): string => c.$.Include) : [];
         includes = includes.concat(contents, compiles);
-        // if(itemGroup.Content !== undefined) {
-        //     let newIncludes = itemGroup.Content.map((c): string => c.$.Include);
-        //     includes = includes.concat(newIncludes);
-        // }
-        // if(itemGroup.Compile !== undefined) {
-        //     let newIncludes = itemGroup.Compile.map((c): string => c.$.Include);
-        //     includes = includes.concat(newIncludes);
-        // }
     });
     return includes;
 };
