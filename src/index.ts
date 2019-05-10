@@ -30,7 +30,7 @@ const app = (argv: Params): Promise<void> => {
         filePath:argv.filePath,
         findPattern: argv.findPattern,
         findIgnores: argv.findIgnores,
-        rootDir: cwd
+        rootDir: argv.rootDir
     }).then((result): Result => {
         report(result);
         return result;
