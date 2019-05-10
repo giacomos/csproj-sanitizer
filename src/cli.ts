@@ -19,5 +19,8 @@ if (require.main === module) {
         .string('findPattern')
         .string('findIgnores');
     var argv = optimist.parse(process.argv);
+    if (process.env.DEBUG === "true") {
+        process.stdout.write(`findPattern: [${argv.findPattern}], findIgnores: [${argv.findIgnores}], rootDir: [${argv.rootDir}]\n`);
+    }
     app(argv);
 }

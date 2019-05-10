@@ -4,7 +4,7 @@
 [![Test Coverage](https://codeclimate.com/github/giacomos/csproj-sanitizer/badges/coverage.svg)](https://codeclimate.com/github/giacomos/csproj-sanitizer)
 [![Code Climate](https://codeclimate.com/github/giacomos/csproj-sanitizer/badges/gpa.svg)](https://codeclimate.com/github/giacomos/csproj-sanitizer)
 [![dependencies Status](https://david-dm.org/giacomos/csproj-sanitizer/status.svg)](https://david-dm.org/giacomos/csproj-sanitizer)
-![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/giacomos/csproj-sanitizer/master/LICENSE)
 
 This mini package helps sanitize your csproj file from duplicates and missing includes.
 
