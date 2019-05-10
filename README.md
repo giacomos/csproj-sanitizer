@@ -42,5 +42,14 @@ X 1 missing includes found.
 - Missing file in csproj: "src\test\examples\test.cshtml"
 ```
 
+# Git pre-commit hook
+
+Create a file called *.git/hooks/pre-commit*
+```bash
+#!/bin/sh
+
+exec csproj-sanitizer --filePath yTos.Web.THEROW.csproj --rootDir yTos.Web.THEROW
+```
+
 # Author
 Giacomo Spettoli
