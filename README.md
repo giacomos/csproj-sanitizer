@@ -48,7 +48,7 @@ Create a file called *.git/hooks/pre-commit*
 ```bash
 #!/bin/sh
 
-exec csproj-sanitizer --filePath yTos.Web.THEROW.csproj --rootDir yTos.Web.THEROW
+exec csproj-sanitizer --filePath example.csproj --rootDir webDir
 ```
 
 # Author
