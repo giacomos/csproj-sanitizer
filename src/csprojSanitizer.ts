@@ -37,13 +37,15 @@ const findDuplicates = (entries: string[]): string[] => {
 };
 
 const findMissingIncludes = async (entries: string[], findPattern: string, findIgnores: string|string[], rootDir: string): Promise<string[]> => {
-    let globbyFindPattern = [path.join(rootDir, findPattern)];
+    let globbyFindPattern = [findPattern];
     if (findIgnores !== undefined && findIgnores !== "") {
         globbyFindPattern = Array.isArray(findIgnores) ? globbyFindPattern.concat(findIgnores) : globbyFindPattern.concat([findIgnores]);
     }
     const files: string[] = await globby(globbyFindPattern, {
-        gitignore: true
+        gitignore: true,
+        cwd: rootDir
     });
+    console.log(`PATH - ${globbyFindPattern} - ${files.length}`);
     let missingFiles: string[] = [];
     files.forEach((filePath): void => {
         const relativePath = filePath.replace(path.join(rootDir, "/"),"").split(path.sep).join('\\');
