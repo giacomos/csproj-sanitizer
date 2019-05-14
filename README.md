@@ -29,8 +29,8 @@ Usage: csproj-sanitizer --filePath [path]
 
 Options:
   --filePath     Relative or Absolute path where the csproj file is located  [required]
-  --findPattern                                                  [default: "**/*.{cshtml,cs}"]
-  --findIgnores                                                  [default: "{node_modules,obj,bin}/**"]
+  --findPattern                                                  [default: "*.{cshtml,cs}"]
+  --findIgnores                                                  [default: "!{node_modules,bin,obj}"]
 ```
 
 # Example

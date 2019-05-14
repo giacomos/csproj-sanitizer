@@ -3,7 +3,7 @@ import { DEFAULT_FIND_PATTERN, DEFAULT_FIND_IGNORE } from "./config";
 import fs from 'fs';
 import util from 'util';
 import path from 'path';
-import glob from 'glob';
+import globby from 'globby';
 // @ts-ignore
 import xml2js = require('xml2js');
 
@@ -36,9 +36,14 @@ const findDuplicates = (entries: string[]): string[] => {
     return duplicates;
 };
 
-const findMissingIncludes = async (entries: string[], findPattern: string, findIgnores: string, rootDir: string): Promise<string[]> => {
-    const globAsync = util.promisify(glob);
-    const files: string[] = await globAsync(path.join(rootDir, findPattern), {"ignore": findIgnores});
+const findMissingIncludes = async (entries: string[], findPattern: string, findIgnores: string|string[], rootDir: string): Promise<string[]> => {
+    let globbyFindPattern = [path.join(rootDir, findPattern)];
+    if (findIgnores !== undefined && findIgnores !== "") {
+        globbyFindPattern = Array.isArray(findIgnores) ? globbyFindPattern.concat(findIgnores) : globbyFindPattern.concat([findIgnores]);
+    }
+    const files: string[] = await globby(globbyFindPattern, {
+        gitignore: true
+    });
     let missingFiles: string[] = [];
     files.forEach((filePath): void => {
         const relativePath = filePath.replace(path.join(rootDir, "/"),"").split(path.sep).join('\\');
@@ -69,15 +74,15 @@ const csprojSanitizer = async ({filePath, findPattern, findIgnores, rootDir}: Pa
     findPattern = findPattern || DEFAULT_FIND_PATTERN;
     findIgnores = findIgnores || DEFAULT_FIND_IGNORE;
 
-    filePath = path.isAbsolute(filePath) ? filePath : path.join(rootDir, filePath);
-
-    results.data = await readFileAsync(filePath, {encoding: 'utf-8'});
+    let filePathAbsolute = path.isAbsolute(filePath) ? filePath : path.join(rootDir, filePath);
+    results.data = await readFileAsync(filePathAbsolute, {encoding: 'utf-8'});
     parsedData = await parseStringAsync(results.data);
 
     results.includes = collectIncludes(parsedData);
 
     results.duplicates = findDuplicates(results.includes);
-    results.missing = await findMissingIncludes(results.includes, findPattern, findIgnores, rootDir);
+    let csprojDir = filePathAbsolute.split(path.sep).slice(0, -1).join(path.sep);
+    results.missing = await findMissingIncludes(results.includes, findPattern, findIgnores, csprojDir);
 
     return results;
 }

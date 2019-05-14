@@ -1,8 +1,6 @@
 import chalk from 'chalk';
 import csprojSanitizer, { findStringLines } from './csprojSanitizer';
 
-const cwd = process.cwd();
-
 const report = (res: Result): void => {
     if (res.duplicates.length > 0) {
         process.stderr.write(`${res.duplicates.length} duplicated includes found.\n`);
