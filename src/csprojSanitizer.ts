@@ -45,7 +45,6 @@ const findMissingIncludes = async (entries: string[], findPattern: string, findI
         gitignore: true,
         cwd: rootDir
     });
-    console.log(`PATH - ${globbyFindPattern} - ${files.length}`);
     let missingFiles: string[] = [];
     files.forEach((filePath): void => {
         const relativePath = filePath.replace(path.join(rootDir, "/"),"").split(path.sep).join('\\');
